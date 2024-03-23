@@ -8,6 +8,7 @@ const UserController = require("../controllers/UserController");
 const CategoryController = require("../controllers/CategoryController");
 const AdController = require("../controllers/AdController");
 const QuestionController = require("../controllers/QuestionController");
+const AnswerController = require("../controllers/AnswerController");
 
 
 
@@ -62,8 +63,18 @@ router.post("/profile", AuthVerification, UserController.ProfileUpdate );
 
 //Question API
 router.post("/question", AuthVerification, QuestionController.AddQuestion );
-router.delete("/question/:id", QuestionController.DeleteQuestion );
-router.post("/question/:id", QuestionController.UpdateQuestion );
+router.delete("/question/:id", AuthVerification, QuestionController.DeleteQuestion );
+router.post("/question/:id",AuthVerification, QuestionController.UpdateQuestion );
+router.get("/question/:id", QuestionController.ViewQuestion );
+router.get("/questions/:adID", QuestionController.ViewAdQuestion );
+
+
+
+
+//Answer API
+router.post("/answer", AuthVerification, AnswerController.AddAnswer );
+router.delete("/answer/:id", AuthVerification, AnswerController.DeleteAnswer );
+router.post("/answer/:id",AuthVerification, AnswerController.UpdateAnswer );
 
 
 

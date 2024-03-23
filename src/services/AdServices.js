@@ -25,12 +25,15 @@ exports.ViewAdService = async(req) =>{
         const joiningCategoryStage = {$lookup: {from: "categories", localField: "categoryID", foreignField: "_id", as: "category"  }};
         const unWindStage = {$unwind: "$category"}
 
-      
+
+
         const data = await AdModel.aggregate([
             matchStage,
-            joiningCategoryStage, unWindStage
-
+            joiningCategoryStage, unWindStage,
+          
         ]);
+
+        
 
 
         return {status:"success", data: data};    

@@ -42,3 +42,25 @@ exports.UpdateQuestionService = async(req) =>{
         return {status:"fail", data:error.toString()}
     }
 }
+
+
+
+exports.ViewAdQuestionService = async(req) =>{
+    
+    try {
+        const adID = new ObjectID(req.params.adID);
+
+        const matchingStage = {$match: {adID: adID }}
+        const joiningAnswerStage = {$lookup: {from: "answers", localField: "_id", foreignField: "questionID", as: "answers"  }};
+
+        const data = await QuestionModel.aggregate([
+            matchingStage,
+            joiningAnswerStage
+
+        ])
+       
+        return {status:"success", data: data};
+    } catch (error) {
+        return {status:"fail", data:error.toString()}
+    }
+}
