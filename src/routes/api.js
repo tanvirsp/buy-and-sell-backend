@@ -9,6 +9,7 @@ const CategoryController = require("../controllers/CategoryController");
 const AdController = require("../controllers/AdController");
 const QuestionController = require("../controllers/QuestionController");
 const AnswerController = require("../controllers/AnswerController");
+const VerifyAdmin = require('../middleware/VerifyAdmin');
 
 
 
@@ -24,6 +25,21 @@ router.post("/file-upload", upload.single('image'),  async(req, res) =>{
     }
   
   });
+
+  
+
+  
+//Multi image upload
+router.post("/file-upload-all", upload.array('image', 5),  async(req, res) =>{
+  try {
+      
+    res.status(200).send({status: true, data: req.files});
+  } catch (error) {
+      res.status(400).send({status: false,  message: error.message})
+      
+  }
+
+});
 
 
 
@@ -52,17 +68,18 @@ router.get('/logout', UserController.LogoutUser);
 
 router.get("/send-otp/:email", UserController.SendOtp )
 router.get("/verify-otp/:email/:otp", UserController.VerifyOTP );
-router.post("/reset-password", UserController.ResetPassword );
+
+router.post("/reset-password", AuthVerification, UserController.ResetPassword );
 router.post("/change-password", AuthVerification, UserController.ChangePassword );
 
 
-router.get("/profile", AuthVerification, UserController.Profile );
+router.get("/profile", AuthVerification,  UserController.Profile );
 router.post("/profile", AuthVerification, UserController.ProfileUpdate );
 
 
 
 //Question API
-router.post("/question", AuthVerification, QuestionController.AddQuestion );
+router.post("/question", AuthVerification, VerifyAdmin, QuestionController.AddQuestion );
 router.delete("/question/:id", AuthVerification, QuestionController.DeleteQuestion );
 router.post("/question/:id",AuthVerification, QuestionController.UpdateQuestion );
 router.get("/question/:id", QuestionController.ViewQuestion );

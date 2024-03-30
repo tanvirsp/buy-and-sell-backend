@@ -2,6 +2,8 @@ const UserModel = require("../models/UserModel");
 const bcrypt = require('bcrypt');
 const { EncodeToken } = require("../utility/TokenHelper");
 const EmailSend = require("../utility/EmailHelper");
+const OTPModel = require("../models/OPTModel");
+
 
 exports.RegisterUserService =async(req) =>{
     try {
@@ -49,8 +51,9 @@ exports.LoginUserService = async(req) =>{
 
        if( user && passwordIsCorrect){
         
+        
             // User Token Create
-            const token=EncodeToken(email, user.role, user._id);
+            const token=EncodeToken(email, user.role, user._id.toString());
             return {status:"success", token: token}
 
         } else {
@@ -67,19 +70,50 @@ exports.LoginUserService = async(req) =>{
 
 
 
+
+exports.SendOtpService = async(req) =>{
+    try {
+        const email= req.params.email;
+        const user = await UserModel.findOne({ email });
+        if(!user){
+            return {status:"fail", message: "User not found, please Signup"}
+        };
+
+        //sendign verify code to email
+        const code = Math.floor(100000+Math.random()*900000);
+        const emailText=`Your Verification Code is= ${code}`;
+        const emailSubject='Email Verification'
+        await EmailSend(email, emailText, emailSubject );
+
+        //set OTP into user database
+        await OTPModel.create({email: email, otp: code } );
+        return {status:"success", message:"6 Digit OTP has been send check mail"}  
+
+    } catch (error) {
+        return {status:"fail",data:error.toString()}
+    }
+}
+
+
+
+
 exports.VerifyOTPService  = async(req) =>{
     try {
         const email= req.params.email;
         const otp= req.params.otp;
-        const total = await UserModel.find({email: email, otp: otp}).count();
+        
+        const total = await OTPModel.find({email: email, otp: otp}).count();
 
-        if(total === 1) {
+        if(total > 0) {
+
+            const user = await UserModel.findOne({ email });
+            
             // User Token Create
-            const token=EncodeToken(email);
+            const token=EncodeToken(email, user.role, user._id.toString() );
             
             // OTP Code Update To 0
-            await UserModel.updateOne({email:email},{$set:{otp:"0"}});
-            return {status:"success", message:"Your Email Verify Successfully", token: token}
+            await OTPModel.updateOne({email:email, otp: otp}, {$set: {status: 1 }});
+            return {status:"success", message:"Your OTP Verify Successfully", token: token }
 
         }else{
             return {status:"fail", message:"Invalid OTP"}
@@ -103,8 +137,8 @@ exports.ResetPasswordService = async(req) =>{
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        const user = await UserModel.findOne({email: email});
-        if(user.otp === "0"){
+        const otp = await OTPModel.findOne({email: email});
+        if(otp.status === 1){
             await UserModel.updateOne({email: email}, {$set: {password: hashedPassword}});
             return {status:"success", message: "Your password have been changed"}
 
@@ -157,28 +191,6 @@ exports.ChangePasswordService = async(req) =>{
 
 
 
-exports.SendOtpService = async(req) =>{
-    try {
-        const email= req.params.email;
-        const user = await UserModel.findOne({ email });
-        if(!user){
-            return {status:"fail", message: "User not found, please Signup"}
-        };
-
-        //sendign verify code to email
-        const code = Math.floor(100000+Math.random()*900000);
-        const emailText=`Your Verification Code is= ${code}`;
-        const emailSubject='Email Verification'
-        await EmailSend(email, emailText, emailSubject );
-
-        //set OTP into user database
-        await UserModel.updateOne({email: email}, {$set:{otp: code}} );
-        return {status:"success", message:"6 Digit OTP has been send check mail"}  
-
-    } catch (error) {
-        return {status:"fail",data:error.toString()}
-    }
-}
 
 
 

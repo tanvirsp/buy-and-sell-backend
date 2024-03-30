@@ -21,7 +21,6 @@ const userSchema = mongoose.Schema( {
     age: { type: String},
     image:{type: String},
     status:{type: String, default:"pending"  },
-    otp:{type: String }
 
 }, {timestamps: true, versionKey:false});
 
