@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema( {
     password: {type: String, required: true, trim: true },
     address: {type: String},
     district: {type: String},
-    mobile: { type: String},
+    mobile: { type: String, required: true},
     role: { type: String, default:"subscriber"},
     age: { type: String},
     image:{type: String},
