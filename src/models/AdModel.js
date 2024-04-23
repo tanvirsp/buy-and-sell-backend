@@ -9,7 +9,7 @@ const dataSchema = mongoose.Schema({
     edition:{type: String, required: true },
     district:{type: String, required: true },
     division:{type: String, required: true },
-    subDistrict:{type: String, required: true },
+    upazilla:{type: String, required: true },
     condition:{type: String, required: true },
     negotiable:{type: String, required: true },
     brand:{type: String, required: true },

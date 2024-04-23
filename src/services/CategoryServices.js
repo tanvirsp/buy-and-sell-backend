@@ -1,3 +1,4 @@
+const AdModel = require("../models/AdModel");
 const CategoryModel = require("../models/CategoryModel");
 const mongoose = require("mongoose");
 const ObjectID= mongoose.Types.ObjectId;
@@ -23,8 +24,18 @@ exports.AddCategoryService = async(req) =>{
 
 exports.CategoriesService = async(req) =>{
     try {
-        const data = await CategoryModel.find({});
-       
+        // const data = await CategoryModel.find({});
+
+        const matchStage = {  $match: { }   };
+ 
+
+
+        const data = await CategoryModel.aggregate([
+            matchStage,
+
+        ])
+     
+
         return {status:"success", data: data};
     } catch (error) {
         return {status:"fail", data:error.toString()}

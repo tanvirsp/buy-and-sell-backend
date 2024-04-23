@@ -8,7 +8,7 @@ module.exports=(req,res,next)=>{
         token=req.cookies['token']
     }
 
-    console.log(token);
+
   // Token Decode
   const decoded=DecodeToken(token);
   

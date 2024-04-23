@@ -32,7 +32,6 @@ router.post("/file-upload", upload.single('image'),  async(req, res) =>{
 //Multi image upload
 router.post("/file-upload-all", upload.array('image', 5),  async(req, res) =>{
   try {
-      
     res.status(200).send({status: true, data: req.files});
   } catch (error) {
       res.status(400).send({status: false,  message: error.message})
@@ -55,10 +54,14 @@ router.post("/file-upload-all", upload.array('image', 5),  async(req, res) =>{
 
 
 //Ad API
-router.post('/ad', AdController.CreateAd );
+router.post('/ad', AuthVerification,  AdController.CreateAd );
 router.get('/ad/:id', AdController.ViewAd );
 router.get('/ads', AdController.AllAds );
+router.get('/my-ads', AuthVerification, AdController.MyAds );
 router.delete('/ad/:id', AdController.DeleteAd );
+router.post('/update-ad/:id', AuthVerification, AdController.UpdateAd );
+router.get('/ad-by-category/:categoryID', AdController.AdByCategory );
+
 
 
 //User API
