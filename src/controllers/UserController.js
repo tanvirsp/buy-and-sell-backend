@@ -1,4 +1,4 @@
-const { RegisterUserService, ViewUserService, LoginUserService, ResetPasswordService, SendOtpService, VerifyOTPService, ChangePasswordService, ProfileService, ProfileUpdateService } = require("../services/UserServices")
+const { RegisterUserService, ViewUserService, LoginUserService, ResetPasswordService, SendOtpService, VerifyOTPService, ChangePasswordService, ProfileService, ProfileUpdateService, AllUsersServices } = require("../services/UserServices")
 
 
 
@@ -86,6 +86,12 @@ exports.Profile = async(req, res) =>{
 
 exports.ProfileUpdate = async(req, res) =>{
     const result = await ProfileUpdateService(req)
+    return res.status(200).json(result)
+}
+
+
+exports.AllUsers = async(req, res) =>{
+    const result = await AllUsersServices(req)
     return res.status(200).json(result)
 }
 

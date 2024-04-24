@@ -61,6 +61,8 @@ router.get('/my-ads', AuthVerification, AdController.MyAds );
 router.delete('/ad/:id', AdController.DeleteAd );
 router.post('/update-ad/:id', AuthVerification, AdController.UpdateAd );
 router.get('/ad-by-category/:categoryID', AdController.AdByCategory );
+router.get('/search/:pageNo/:perPage/:keyword', AdController.AdSearch );
+
 
 
 
@@ -72,12 +74,17 @@ router.get('/logout', UserController.LogoutUser);
 router.get("/send-otp/:email", UserController.SendOtp )
 router.get("/verify-otp/:email/:otp", UserController.VerifyOTP );
 
-router.post("/reset-password", AuthVerification, UserController.ResetPassword );
+router.post("/reset-password", UserController.ResetPassword );
 router.post("/change-password", AuthVerification, UserController.ChangePassword );
 
 
-router.get("/profile", AuthVerification,  UserController.Profile );
+router.get("/profile", AuthVerification, UserController.Profile );
 router.post("/profile", AuthVerification, UserController.ProfileUpdate );
+
+//admin route
+router.get("/all-users", AuthVerification, VerifyAdmin, UserController.AllUsers );
+
+
 
 
 

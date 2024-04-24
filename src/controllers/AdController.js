@@ -1,4 +1,4 @@
-const { CreateAdService, ViewAdService, AllAdsService, DeleteAdService, MyAdsService, UpdateAdService, AdByCategoryService } = require("../services/AdServices")
+const { CreateAdService, ViewAdService, AllAdsService, DeleteAdService, MyAdsService, UpdateAdService, AdByCategoryService, AdSearchService } = require("../services/AdServices")
 
 
 
@@ -38,5 +38,11 @@ exports.UpdateAd =async(req, res)=>{
 
 exports.AdByCategory =async(req, res)=>{
     const result = await AdByCategoryService(req)
+    res.status(200).json(result)
+}
+
+
+exports.AdSearch =async(req, res)=>{
+    const result = await AdSearchService(req)
     res.status(200).json(result)
 }

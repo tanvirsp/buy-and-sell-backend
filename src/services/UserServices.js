@@ -236,3 +236,17 @@ exports.ProfileUpdateService =  async(req) =>{
         return {status:"fail",data:error.toString()}
     }
 }
+
+
+
+exports.AllUsersServices =  async(req) =>{
+    
+    try {
+       
+        const data =  await UserModel.find();
+        return {status:"success", data: data}
+
+    } catch (error) {
+        return {status:"fail",data:error.toString()}
+    }
+}

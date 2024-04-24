@@ -139,3 +139,52 @@ exports.AdByCategoryService = async(req) =>{
     }
 };
 
+
+
+
+
+
+exports.AdSearchService = async(req) =>{
+    try {
+        const pageNo = Number(req.params.pageNo);
+        const perPage = Number(req.params.perPage);
+
+        const skipRow = (pageNo - 1) * perPage;
+    
+
+        const SearchRegex = { "$regex": req.params.keyword, "$options": 'i' } ;
+        const SearchQuery = {name: SearchRegex};
+
+        const MatchStage = {$match: SearchQuery };
+        const JoiningCategoryStage = {$lookup: {from: "categories", localField: "categoryID", foreignField: "_id", as: "category"  }};
+        const UnWindStage = {$unwind: "$category"}
+        const sortStage = { $sort: { createdAt : -1}};
+
+
+        const data = await AdModel.aggregate([
+            MatchStage,
+            JoiningCategoryStage, UnWindStage,
+            sortStage,
+            {$skip: skipRow}, {$limit: perPage}
+            
+        ])
+
+
+
+    
+        const total = (await AdModel.aggregate([
+            {$match: SearchQuery}, 
+            {$count: "total"}
+        ]))[0]["total"];
+
+      
+
+
+
+       return {status:"success", data:data, total: total}
+        
+    } catch (error) {
+        return {status:"fail",data:error.toString()}
+    }
+}
+
